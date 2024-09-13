@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnu.tool.authority.mapper.AuthorityMapper">
+    <resultMap id="authorityMap" type="com.jnu.tool.authority.pojo.Authority">
+        <result property="authorityId" column="AUTHORITY_ID"/>
+        <result property="authorityDescription" column="AUTHORITY_DESCRIPTION"/>
+    </resultMap>
+
+    <sql id="db_properties">
+        AUTHORITY_ID, AUTHORITY_DESCRIPTION
+    </sql>
+
+    <insert id="insertAuthority" parameterType="com.jnu.tool.authority.pojo.Authority">
+        insert into DCAUTHORITY values (#{authorityId}, #{authorityDescription})
+    </insert>
+
+    <delete id="deleteAuthorityById" parameterType="string">
+        delete from DCAUTHORITY where AUTHORITY_ID = #{authorityId}
+    </delete>
+
+    <update id="updateAuthority" parameterType="com.jnu.tool.authority.pojo.Authority">
+        update DCAUTHORITY
+        <trim prefix="set" prefixOverrides=",">
+            <if test="authorityDescription != null and authorityDescription != ''">
+                AUTHORITY_DESCRIPTION = #{authorityDescription}
+            </if>
+        </trim>
+        where AUTHORITY_ID = #{authorityId}
+    </update>
+
+    <select id="selectAuthorityById" parameterType="string" resultMap="authorityMap">
+        select <include refid="db_properties"/> from DCAUTHORITY
+        <trim prefix="where" prefixOverrides="and">
+            <if test="authorityId != null and authorityId != ''">
+                AUTHORITY_ID = #{authorityId}
+            </if>
+        </trim>
+    </select>
+</mapper>

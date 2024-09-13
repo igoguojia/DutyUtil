@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnu.tool.authority.mapper.CharacterMapper">
+    <resultMap id="characterMap" type="com.jnu.tool.authority.pojo.Character">
+        <result property="characterId" column="CHARACTER_ID"/>
+        <result property="characterDescription" column="CHARACTER_DESCRIPTION"/>
+    </resultMap>
+
+    <sql id="db_properties">
+        CHARACTER_ID, CHARACTER_DESCRIPTION
+    </sql>
+
+    <insert id="insertCharacter" parameterType="com.jnu.tool.authority.pojo.Character">
+        insert into DCCHARACTER values (#{characterId}, #{characterDescription})
+    </insert>
+
+    <delete id="deleteCharacterById" parameterType="string">
+        delete from DCCHARACTER where CHARACTER_ID = #{characterId}
+    </delete>
+
+    <update id="updateCharacter" parameterType="com.jnu.tool.authority.pojo.Character">
+        update DCCHARACTER
+        <trim prefix="set" prefixOverrides=",">
+            <if test="characterDescription != null and characterDescription != ''">
+                CHARACTER_DESCRIPTION = #{characterDescription}
+            </if>
+        </trim>
+        where CHARACTER_ID = #{characterId}
+    </update>
+
+    <select id="selectCharacterById" parameterType="string" resultMap="characterMap">
+        select <include refid="db_properties"/> from DCCHARACTER
+        <trim prefix="where" prefixOverrides="and">
+            <if test="characterId != null and characterId != ''">
+                CHARACTER_ID = #{characterId}
+            </if>
+        </trim>
+    </select>
+</mapper>

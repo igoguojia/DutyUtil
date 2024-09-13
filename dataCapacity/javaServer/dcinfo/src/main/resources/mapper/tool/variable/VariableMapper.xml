@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnu.tool.variable.mapper.VariableMapper">
+    <resultMap id="dcVariableInfoMap" type="com.jnu.tool.variable.pojo.Variable">
+        <result property="variableName" column="VARIABLE_NAME"/>
+        <result property="variableAlias" column="VARIABLE_ALIAS"/>
+        <result property="variableValue" column="VARIABLE_VALUE"/>
+        <result property="variableDescription" column="VARIABLE_DESCRIPTION"/>
+    </resultMap>
+
+    <sql id="db_properties">
+        VARIABLE_NAME, VARIABLE_ALIAS, VARIABLE_VALUE, VARIABLE_DESCRIPTION
+    </sql>
+
+    <select id="selectAllVariables" resultMap="dcVariableInfoMap">
+        select
+        <include refid="db_properties"/>
+        from DCVARIABLEINFO
+    </select>
+
+    <select id="selectVariableByName" parameterType="string" resultMap="dcVariableInfoMap">
+        select
+        <include refid="db_properties"/>
+        from DCVARIABLEINFO where VARIABLE_NAME = #{variableName}
+    </select>
+
+    <select id="searchVariableByNameFuzzy" parameterType="string" resultMap="dcVariableInfoMap">
+        select
+        <include refid="db_properties"/>
+        from DCVARIABLEINFO where VARIABLE_NAME like concat(concat('%', #{variableName}), '%')
+    </select>
+
+    <select id="selectVariableByAlias" parameterType="string" resultMap="dcVariableInfoMap">
+        select
+        <include refid="db_properties"/>
+        from DCVARIABLEINFO where VARIABLE_ALIAS like concat(concat('%', #{variableAlias}), '%')
+    </select>
+
+    <select id="selectVariableByNameAndAlias" parameterType="string" resultMap="dcVariableInfoMap">
+        select
+        <include refid="db_properties"/>
+        from DCVARIABLEINFO where VARIABLE_NAME like concat(concat('%', #{variableName}), '%') and VARIABLE_ALIAS like
+        concat(concat('%', #{variableAlias}), '%')
+    </select>
+
+    <insert id="insertVariable" parameterType="com.jnu.tool.variable.pojo.Variable">
+        insert into DCVARIABLEINFO
+        values (#{variableName}, #{variableAlias}, #{variableValue}, #{variableDescription})
+    </insert>
+
+    <delete id="deleteVariableByName" parameterType="string">
+        delete
+        from DCVARIABLEINFO
+        <if test="variableName != null and variableName != ''">
+            where VARIABLE_NAME = #{variableName}
+        </if>
+    </delete>
+
+    <update id="updateVariable" parameterType="com.jnu.tool.variable.pojo.Variable">
+        update DCVARIABLEINFO
+        set VARIABLE_ALIAS       = #{variableAlias},
+            VARIABLE_VALUE       = #{variableValue},
+            VARIABLE_DESCRIPTION = #{variableDescription}
+        where VARIABLE_NAME = #{variableName}
+    </update>
+</mapper>

@@ -1,0 +1,46 @@
+server:
+  port: 7783
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+  datasource:
+    dynamic:
+      primary: d1
+      datasource:
+        d1:
+          url: jdbc:oracle:thin:@0.0.0.0:8080:orcl
+          driver-class-name: oracle.jdbc.OracleDriver
+          username: jn_asset
+          password: 123
+      hikari:
+        is-auto-commit: false
+  autoconfigure:
+    exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+  jackson:
+    default-property-inclusion:
+  mail:
+    host: smtp.jnu.cn
+    username: jnu@jnu.cn
+    password: jun.password
+    port: 25
+    protocol: smtp
+    default-encoding: UTF-8
+token:
+  SECRET: jnulzk #token密码
+  algorithm: HS256
+  headers:
+    alg: ${token.algorithm}
+    type: jwt
+  payload:
+    userID: userID
+    authID: authID
+    lenAuth: 5  # IO权限长度
+curPage: 1   # 默认页码
+pageSize: 20 # 默认每页数量

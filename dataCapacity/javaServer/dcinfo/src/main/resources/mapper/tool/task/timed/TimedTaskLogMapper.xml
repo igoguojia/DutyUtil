@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnu.tool.task.timed.mapper.TimedTaskLogMapper">
+    <resultMap id="timedTaskLogMap" type="com.jnu.tool.task.timed.pojo.TimedTaskLog">
+        <result property="userID" column="USER_ID"/>
+        <result property="taskAlias" column="TASK_ALIAS"/>
+        <result property="taskName" column="TASK_NAME"/>
+        <result property="taskType" column="TASK_TYPE"/>
+        <result property="startTime" column="START_TIME"/>
+        <result property="endTime" column="END_TIME"/>
+        <result property="cronExpr" column="CRON_EXPR"/>
+        <result property="methodParam" column="METHOD_PARAM"/>
+        <result property="msgInfo" column="MSG_INFO"/>
+        <result property="submitTime" column="SUBMIT_TIME"/>
+        <result property="flag" column="FLAG"/>
+    </resultMap>
+
+    <sql id="db_properties">
+        USER_ID
+        , TASK_ALIAS, TASK_NAME, TASK_TYPE, START_TIME, END_TIME, CRON_EXPR, METHOD_PARAM, SUBMIT_TIME, MSG_INFO, FLAG
+    </sql>
+
+    <insert id="insertTimedTaskLog" parameterType="com.jnu.tool.task.timed.pojo.TimedTaskLog">
+        insert into DCTIMEDTASKLOG (<include refid="db_properties"/>)
+        values (#{userID}, #{taskAlias}, #{taskName}, #{taskType}, #{startTime}, #{endTime}, #{cronExpr},
+        #{methodParam}, #{submitTime}, #{msgInfo}, #{flag})
+    </insert>
+
+    <select id="selectLastedTimedTaskLog" parameterType="string" resultMap="timedTaskLogMap">
+        select
+        <include refid="db_properties"/>
+        from DCTIMEDTASKLOG t
+        where TASK_ALIAS = #{taskAlias} and TASK_NAME = #{taskName}
+        order by SUBMIT_TIME DESC
+    </select>
+
+    <select id="selectRecentTimedTaskLog" parameterType="int" resultMap="timedTaskLogMap">
+        select
+        <include refid="db_properties"/>
+        from
+        (select * from DCTIMEDTASKLOG order by SUBMIT_TIME DESC)
+        <if test="recordCount != null and recordCount != 0">
+            where rownum &gt; 0 and rownum &lt;= #{recordCount}
+        </if>
+    </select>
+
+    <delete id="deleteTimedTaskLogs" parameterType="int">
+        delete from DCTIMEDTASKLOG
+        <if test="oldestCount != null and oldestCount != ''">
+            where rownum &gt; 0 and rownum &lt;= #{oldestCount}
+        </if>
+    </delete>
+
+    <delete id="removeLogByAlias" parameterType="string">
+        delete
+        from DCTIMEDTASKLOG
+        where TASK_ALIAS = #{taskAlias}
+    </delete>
+</mapper>

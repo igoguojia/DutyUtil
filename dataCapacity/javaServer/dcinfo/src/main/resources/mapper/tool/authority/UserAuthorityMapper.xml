@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnu.tool.authority.mapper.UserAuthorityMapper">
+    <resultMap id="userAuthorityMap" type="com.jnu.tool.authority.pojo.UserAuthority">
+        <result property="userID" column="USER_ID"/>
+        <result property="authorityId" column="AUTHORITY_ID"/>
+    </resultMap>
+
+    <sql id="db_properties">
+        USER_ID, AUTHORITY_ID
+    </sql>
+
+    <insert id="insertUserAuthority" parameterType="com.jnu.tool.authority.pojo.UserAuthority">
+        insert into DCUSERAUTHORITY values (#{userID}, #{authorityId})
+    </insert>
+
+    <delete id="deleteUserAuthority">
+        delete from DCUSERAUTHORITY where USER_ID = #{userID} and AUTHORITY_ID = #{authorityId}
+    </delete>
+
+    <select id="selectAllUserAuthority" resultMap="userAuthorityMap">
+        select <include refid="db_properties"/> from DCUSERAUTHORITY
+    </select>
+
+    <select id="selectUserAuthorityByUserId" parameterType="string" resultMap="userAuthorityMap">
+        select <include refid="db_properties"/> from DCUSERAUTHORITY
+        <trim prefix="where" prefixOverrides="and">
+            <if test="userID != null and userID !=''">
+                USER_ID = #{userID}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectUserAuthorityByAuthorityId" parameterType="string" resultMap="userAuthorityMap">
+        select <include refid="db_properties"/> from DCUSERAUTHORITY
+        <trim prefix="where" prefixOverrides="and">
+            <if test="authorityId != null and authorityId !=''">
+                AUTHORITY_ID = #{authorityId}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectAllAuthorityByUserId" parameterType="string" resultType="com.jnu.tool.authority.pojo.Authority">
+        select a.AUTHORITY_ID as authorityId, a.AUTHORITY_DESCRIPTION as authorityDescription
+        from DCUSERAUTHORITY ua, DCAUTHORITY a
+        where ua.USER_ID = #{userID} and ua.AUTHORITY_ID = a.AUTHORITY_ID
+        UNION ALL
+        select a.AUTHORITY_ID as authorityId, a.AUTHORITY_DESCRIPTION as authorityDescription
+        from
+            (
+                (DCUSERCHARACTER uc inner join DCCHARACTER c on uc.USER_ID = #{userID} and uc.CHARACTER_ID = c.CHARACTER_ID)
+                inner join DCCHARACTERAUTHORITY ca on c.CHARACTER_ID = ca.CHARACTER_ID
+                )
+                inner join DCAUTHORITY a on ca.AUTHORITY_ID = a.AUTHORITY_ID
+
+    </select>
+</mapper>

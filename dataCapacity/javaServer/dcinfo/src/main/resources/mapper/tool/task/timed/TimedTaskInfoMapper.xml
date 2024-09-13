@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnu.tool.task.timed.mapper.TimedTaskInfoMapper">
+    <resultMap id="timedTaskParamMap" type="com.jnu.tool.task.timed.pojo.TimedTaskInfo">
+        <result property="userID" column="USER_ID"/>
+        <result property="taskAlias" column="TASK_ALIAS"/>
+        <result property="taskName" column="TASK_NAME"/>
+        <result property="taskType" column="TASK_TYPE"/>
+        <result property="startTime" column="START_TIME"/>
+        <result property="endTime" column="END_TIME"/>
+        <result property="cron" column="CRON_EXPR"/>
+        <result property="params" column="TASK_PARAMS"/>
+        <result property="flag" column="TASK_FLAG"/>
+    </resultMap>
+
+    <sql id="db_properties">
+        USER_ID, TASK_NAME, TASK_TYPE, START_TIME, END_TIME, CRON_EXPR, TASK_PARAMS, TASK_ALIAS, TASK_FLAG
+    </sql>
+
+    <select id="selectAllTask" resultMap="timedTaskParamMap">
+        select
+        <include refid="db_properties"/>
+        from
+        DCTIMEDTASKREGISTER
+    </select>
+
+    <select id="selectTaskById" parameterType="string" resultMap="timedTaskParamMap">
+        select
+        <include refid="db_properties"/>
+        from
+        DCTIMEDTASKREGISTER where TASK_ALIAS = #{taskAlias}
+    </select>
+
+    <insert id="insertTask" parameterType="com.jnu.tool.task.timed.pojo.TimedTaskInfo">
+        insert into DCTIMEDTASKREGISTER(<include refid="db_properties"/>)
+        values (#{userID}, #{taskName}, #{taskType}, #{startTime}, #{endTime}, #{cron}, #{params}, #{taskAlias}, #{flag})
+    </insert>
+
+    <delete id="deleteTask" parameterType="string">
+        delete
+        from DCTIMEDTASKREGISTER
+        where TASK_ALIAS = #{taskAlias}
+    </delete>
+
+    <update id="updateTask" parameterType="string">
+        update DCTIMEDTASKREGISTER
+        set USER_ID     = #{userID},
+            TASK_NAME   = #{taskName},
+            TASK_TYPE   = #{taskType},
+            START_TIME  = #{startTime},
+            END_TIME    = #{endTime},
+            CRON_EXPR   = #{cron},
+            TASK_PARAMS = #{params},
+            TASK_FLAG = #{flag}
+        where TASK_ALIAS = #{taskAlias}
+    </update>
+
+    <update id="updateState" parameterType="string">
+        update DCTIMEDTASKREGISTER
+        set TASK_FLAG = #{flag}
+        where TASK_ALIAS = #{taskAlias}
+    </update>
+
+    <select id="selectLiveTask" resultMap="timedTaskParamMap">
+        select
+        <include refid="db_properties"/>
+        from DCTIMEDTASKREGISTER
+        where TASK_FLAG = 1
+    </select>
+</mapper>

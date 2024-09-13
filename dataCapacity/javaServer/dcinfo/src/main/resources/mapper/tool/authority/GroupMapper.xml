@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnu.tool.authority.mapper.GroupMapper">
+    <resultMap id="groupMap" type="com.jnu.tool.authority.pojo.Group">
+        <result property="groupName" column="GROUP_NAME"/>
+        <result property="groupDescription" column="GROUP_DESCRIPTION"/>
+    </resultMap>
+
+    <sql id="db_properties">
+        GROUP_NAME, GROUP_DESCRIPTION
+    </sql>
+
+    <insert id="insertGroup" parameterType="com.jnu.tool.authority.pojo.Group">
+        insert into DCGROUP values (#{groupName}, #{groupDescription})
+    </insert>
+
+    <delete id="deleteGroupByName" parameterType="string">
+        delete from DCGROUP where GROUP_NAME = #{groupName}
+    </delete>
+
+    <update id="updateGroup" parameterType="com.jnu.tool.authority.pojo.Group">
+        update DCGROUP
+        <trim prefix="set" prefixOverrides=",">
+            <if test="groupDescription != null and groupDescription != ''">
+                GROUP_DESCRIPTION = #{groupDescription}
+            </if>
+        </trim>
+        where GROUP_NAME = #{groupName}
+    </update>
+
+    <select id="selectGroupByName" parameterType="string" resultMap="groupMap">
+        select <include refid="db_properties"/> from DCGROUP
+        <trim prefix="where" prefixOverrides="and">
+            <if test="groupName != null and groupName != ''">
+                GROUP_NAME = #{groupName}
+            </if>
+        </trim>
+    </select>
+</mapper>

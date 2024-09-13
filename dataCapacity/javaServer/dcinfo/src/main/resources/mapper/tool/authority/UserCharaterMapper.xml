@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jnu.tool.authority.mapper.UserCharacterMapper">
+    <resultMap id="userCharacterMap" type="com.jnu.tool.authority.pojo.UserCharacter">
+        <result property="userID" column="USER_ID"/>
+        <result property="characterId" column="CHARACTER_ID"/>
+    </resultMap>
+
+    <sql id="db_properties">
+        USER_ID, CHARACTER_ID
+    </sql>
+
+    <insert id="insertUserCharacter" parameterType="com.jnu.tool.authority.pojo.UserCharacter">
+        insert into DCUSERCHARACTER values (#{userID}, #{characterId})
+    </insert>
+
+    <delete id="deleteUserCharacter">
+        delete from DCUSERCHARACTER where USER_ID = #{userID} and CHARACTER_ID = #{characterId}
+    </delete>
+
+    <select id="selectAllUserCharacter" resultMap="userCharacterMap">
+        select <include refid="db_properties"/> from DCUSERCHARACTER
+    </select>
+
+    <select id="selectUserCharacterByUserId" parameterType="string" resultMap="userCharacterMap">
+        select <include refid="db_properties"/> from DCUSERCHARACTER
+        <trim prefix="where" prefixOverrides="and">
+            <if test="userID != null and userID !=''">
+                USER_ID = #{userID}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectUserCharacterByCharacterId" parameterType="string" resultMap="userCharacterMap">
+        select <include refid="db_properties"/> from DCUSERCHARACTER
+        <trim prefix="where" prefixOverrides="and">
+            <if test="characterId != null and characterId !=''">
+                CHARACTER_ID = #{characterId}
+            </if>
+        </trim>
+    </select>
+</mapper>

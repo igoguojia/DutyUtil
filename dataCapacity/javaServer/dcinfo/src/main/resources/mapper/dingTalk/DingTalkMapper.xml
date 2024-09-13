@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jnu.dcinfo.jumpToMail.mapper.DingTalkMapper">
+
+    <select id="selectAllDT" resultType="com.jnu.dcinfo.jumpToMail.pojo.DingTalk">
+        select WEB_HOOK as webHook, GROUP_NAME as groupName, secret from DCDINGTALKINFO
+    </select>
+
+    <select id="selectByGroupName" resultType="com.jnu.dcinfo.jumpToMail.pojo.DingTalk">
+        select WEB_HOOK as webHook, GROUP_NAME as groupName, secret from DCDINGTALKINFO where GROUP_NAME = #{groupName}
+    </select>
+    
+    <insert id="insertDingTalk" parameterType="com.jnu.dcinfo.jumpToMail.pojo.DingTalk">
+        insert into DCDINGTALKINFO values (#{webHook}, #{groupName}, #{secret})
+    </insert>
+
+    <delete id="deleteDingTalk" parameterType="String">
+        delete from DCDINGTALKINFO where GROUP_NAME = #{groupName}
+    </delete>
+
+    <update id="updateDingTalk" parameterType="com.jnu.dcinfo.jumpToMail.pojo.DingTalk">
+        update DCDINGTALKINFO set WEB_HOOK = #{webHook}, SECRET = #{secret} where GROUP_NAME = #{groupName}
+    </update>
+
+    <update id="updateGroupName" parameterType="String">
+        update DCDINGTALKINFO set GROUP_NAME = #{newGroupName} where GROUP_NAME = #{oldGroupName}
+    </update>
+</mapper>
